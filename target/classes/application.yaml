@@ -1,0 +1,29 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILE_ACTIVE:local}
+  application:
+    name: bff-notes
+
+server:
+  port: 9003
+  servlet:
+    context-path: /bff-notes
+
+management:
+  server:
+    port: 9191
+  endpoints:
+    web:
+      exposure:
+        include: info, health, metrics, loggers, monitoring
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.saveit: ${LOGGING_LEVEL_APP:INFO}
+    org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
+
+
+
