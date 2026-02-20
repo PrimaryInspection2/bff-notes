@@ -201,3 +201,4 @@ $RECYCLE.BIN/
 /.idea/compiler.xml
 /target/classes/application-local.yaml
 /target/classes/application.yaml
+/target/
