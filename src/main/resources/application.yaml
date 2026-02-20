@@ -26,4 +26,6 @@ logging:
     org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
 
 
-
+saveit:
+  notes-service:
+    url: ${NOTES_SERVICE_URL:localhost:9004}

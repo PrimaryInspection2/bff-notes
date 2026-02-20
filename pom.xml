@@ -26,10 +26,16 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <java.version>25</java.version>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
+        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -133,6 +139,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -145,31 +152,7 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>generate-docs</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <backend>html</backend>
-                            <doctype>book</doctype>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.springframework.restdocs</groupId>
-                        <artifactId>spring-restdocs-asciidoctor</artifactId>
-                        <version>${spring-restdocs.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -182,6 +165,97 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test-integration/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                    <output>file</output>
+                    <append>true</append>
+                    <excludes>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/resources/**</exclude>
+                        <exclude>**/config/**</exclude>
+                        <exclude>**/configuration/**</exclude>
+                        <exclude>**/exception/**</exclude>
+                        <exclude>**/repository/**</exclude>
+                        <exclude>**/entity/**</exclude>
+                        <exclude>**/BffNotesApplication.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

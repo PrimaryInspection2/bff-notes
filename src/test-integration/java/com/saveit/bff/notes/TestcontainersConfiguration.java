@@ -7,12 +7,12 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
 
-	@Bean
-	@ServiceConnection(name = "openzipkin/zipkin")
-	GenericContainer<?> zipkinContainer() {
-		return new GenericContainer<>(DockerImageName.parse("openzipkin/zipkin:latest")).withExposedPorts(9411);
-	}
+    @Bean
+    @ServiceConnection(name = "openzipkin/zipkin")
+    public GenericContainer<?> zipkinContainer() {
+        return new GenericContainer<>(DockerImageName.parse("openzipkin/zipkin:latest")).withExposedPorts(9411);
+    }
 
 }
