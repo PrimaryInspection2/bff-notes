@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient(
         name = "notesServiceFeignClient",
         url = "${saveit.notes-service.url}",
-        path = "note-service/note",
+        path = "service-notes/note ",
         configuration = NotesServiceFeignClientConfiguration.class)
 public interface NotesServiceFeignClient {
 
