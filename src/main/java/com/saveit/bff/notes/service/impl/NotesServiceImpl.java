@@ -1,9 +1,12 @@
 package com.saveit.bff.notes.service.impl;
 
+import com.saveit.bff.notes.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.feign.client.NotesServiceFeignClient;
+import com.saveit.bff.notes.mapper.NoteServiceRequestMapper;
 import com.saveit.bff.notes.service.NoteService;
 import com.saveit.bff.notes.web.dto.NoteRequestDto;
 import com.saveit.bff.notes.web.dto.NoteResponseDto;
+import com.saveit.bff.notes.web.dto.NoteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,27 +19,30 @@ import java.util.List;
 public class NotesServiceImpl implements NoteService {
 
     private final NotesServiceFeignClient notesServiceFeignClient;
+    private final NoteServiceRequestMapper  noteServiceRequestMapper;
 
     @Override
-    public NoteResponseDto create(NoteRequestDto request) {
+    public NoteResponseDto create(NoteRequestDto request, NoteSource source) {
         log.info("Creating note for userId={}", request.userId());
-        NoteResponseDto response = notesServiceFeignClient.create(request);
+        NoteServiceRequestDto noteServiceRequestDto = noteServiceRequestMapper.toNoteServiceRequestDto(request, source);
+        NoteResponseDto response = notesServiceFeignClient.create(noteServiceRequestDto);
         log.info("Note created with id={}", response.userId());
         return response;
     }
 
     @Override
-    public NoteResponseDto getById(String id) {
-        log.info("Fetching note with id={}", id);
-        NoteResponseDto response = notesServiceFeignClient.getById(id);
+    public NoteResponseDto getById(String noteId) {
+        log.info("Fetching note with id={}", noteId);
+        NoteResponseDto response = notesServiceFeignClient.getById(noteId);
         log.info("Fetched note: {}", response);
         return response;
     }
 
     @Override
-    public NoteResponseDto update(String id, NoteRequestDto request) {
-        log.info("Updating note id={} for userId={}", id, request.userId());
-        NoteResponseDto response = notesServiceFeignClient.update(id, request);
+    public NoteResponseDto update(NoteRequestDto request, NoteSource source) {
+        log.info("Updating note id={} for userId={}", request.noteId(), request.userId());
+        NoteServiceRequestDto noteServiceRequestDto = noteServiceRequestMapper.toNoteServiceRequestDto(request, source);
+        NoteResponseDto response = notesServiceFeignClient.update(noteServiceRequestDto);
         log.info("Note updated: {}", response);
         return response;
     }

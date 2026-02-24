@@ -1,6 +1,7 @@
 package com.saveit.bff.notes.feign.configuration;
 
 import feign.Logger;
+import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,5 +12,10 @@ public class NotesServiceFeignClientConfiguration {
     @Bean
     Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;
+    }
+
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new NotesServiceErrorDecoder();
     }
 }
