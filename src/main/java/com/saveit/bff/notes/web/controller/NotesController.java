@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.saveit.bff.notes.web.dto.NoteSource.REST_API;
+
 @RestController
 @Slf4j
 @RequestMapping("/note")
 @RequiredArgsConstructor
+//todo change all path variables to request bodies
 public class NotesController {
 
     private final NoteService notesService;
@@ -21,7 +24,7 @@ public class NotesController {
     @PostMapping
     public NoteResponseDto create(@Valid @RequestBody NoteRequestDto request) {
         log.info("Create note for");
-        return notesService.create(request);
+        return notesService.create(request, REST_API);
     }
 
     @GetMapping("/{id}")
@@ -31,12 +34,9 @@ public class NotesController {
     }
 
     @PutMapping("/{id}")
-    public NoteResponseDto update(
-            @PathVariable String id,
-            @Valid @RequestBody NoteRequestDto request
-    ) {
-        log.info("Update note id={}", id);
-        return notesService.update(id, request);
+    public NoteResponseDto update(@Valid @RequestBody NoteRequestDto request) {
+        log.info("Update note id={}", request.noteId());
+        return notesService.update(request, REST_API);
     }
 
     @DeleteMapping("/{id}")

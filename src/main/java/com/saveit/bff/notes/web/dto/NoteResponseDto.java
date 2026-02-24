@@ -1,12 +1,13 @@
 package com.saveit.bff.notes.web.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder(toBuilder = true)
-public record NoteResponseDto(@NotBlank String userId, String title, @NotBlank String content,
-                              @NotBlank String source, @NotBlank String status,
-                              @NotBlank LocalDateTime createdAt, LocalDateTime updatedAt) {
+public record NoteResponseDto(String noteId,String userId, String title, String content,
+                              NoteSource source, NoteStatus status, NotePriority priority,
+                              Set<TagDto> tags,
+                              LocalDateTime createdAt, LocalDateTime updatedAt) {
 }
