@@ -1,8 +1,8 @@
 package com.saveit.bff.notes.service.impl;
 
-import com.saveit.bff.notes.dto.NoteServiceRequestDto;
+import com.saveit.bff.notes.feign.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.feign.client.NotesServiceFeignClient;
-import com.saveit.bff.notes.mapper.NoteServiceRequestMapper;
+import com.saveit.bff.notes.mapper.NoteServiceNoteRequestMapper;
 import com.saveit.bff.notes.web.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class NotesServiceImplTest {
     private NotesServiceFeignClient feignClient;
 
     @Mock
-    private NoteServiceRequestMapper mapper;
+    private NoteServiceNoteRequestMapper mapper;
 
     @InjectMocks
     private NotesServiceImpl notesService;

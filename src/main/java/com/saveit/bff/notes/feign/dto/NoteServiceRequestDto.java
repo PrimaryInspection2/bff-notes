@@ -1,4 +1,4 @@
-package com.saveit.bff.notes.dto;
+package com.saveit.bff.notes.feign.dto;
 
 import com.saveit.bff.notes.web.dto.NotePriority;
 import com.saveit.bff.notes.web.dto.NoteSource;

@@ -1,6 +1,6 @@
 package com.saveit.bff.notes.mapper;
 
-import com.saveit.bff.notes.dto.NoteServiceRequestDto;
+import com.saveit.bff.notes.feign.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.web.dto.NoteRequestDto;
 import com.saveit.bff.notes.web.dto.NoteSource;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class NoteServiceRequestMapper {
+public class NoteServiceNoteRequestMapper {
 
     public NoteServiceRequestDto toNoteServiceRequestDto(NoteRequestDto noteRequestDto, NoteSource source) {
         return NoteServiceRequestDto.builder()

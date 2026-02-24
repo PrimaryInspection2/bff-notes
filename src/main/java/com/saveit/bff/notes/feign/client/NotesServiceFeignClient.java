@@ -1,6 +1,6 @@
 package com.saveit.bff.notes.feign.client;
 
-import com.saveit.bff.notes.dto.NoteServiceRequestDto;
+import com.saveit.bff.notes.feign.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.feign.configuration.NotesServiceFeignClientConfiguration;
 import com.saveit.bff.notes.web.dto.NoteResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
