@@ -1,13 +1,16 @@
 package com.saveit.bff.notes.web.exception;
 
 import com.saveit.bff.notes.exception.ApiErrorResponse;
-import com.saveit.bff.notes.exception.NoteServiceNotFoundException;
 import com.saveit.bff.notes.exception.NoteServiceGeneralException;
+import com.saveit.bff.notes.exception.NoteServiceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -30,8 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoteServiceNotFoundException.class)
     public ResponseEntity<@NonNull ApiErrorResponse> handleNoteNotFound(
             NoteServiceNotFoundException ex,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         log.warn("Note not found: {}", ex.getNoteId());
 
         ApiErrorResponse error = ApiErrorResponse.builder()
@@ -49,11 +51,54 @@ public class GlobalExceptionHandler {
     // 400 - Validation errors
     // =========================================================
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<@NonNull ApiErrorResponse> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .timestamp(java.time.LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Malformed JSON request: " + ex.getMostSpecificCause().getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<@NonNull ApiErrorResponse> handleConstraintViolation(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+
+        Map<String, String> validationErrors = ex.getConstraintViolations()
+                .stream()
+                .collect(Collectors.toMap(
+                        v -> {
+                            String path = v.getPropertyPath().toString();
+                            return path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
+                        },
+                        ConstraintViolation::getMessage,
+                        (existing, replacement) -> existing
+                ));
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Validation failed")
+                .path(request.getRequestURI())
+                .validationErrors(validationErrors)
+                .build();
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<@NonNull ApiErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         Map<String, String> validationErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -82,8 +127,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<@NonNull ApiErrorResponse> handleMissingParam(
             MissingServletRequestParameterException ex,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -102,8 +146,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoteServiceGeneralException.class)
     public ResponseEntity<@NonNull ApiErrorResponse> handleServiceException(
             NoteServiceGeneralException ex,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         log.error("Downstream service error", ex);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
@@ -124,8 +167,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<@NonNull ApiErrorResponse> handleGenericException(
             Exception ex,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         log.error("Unexpected error", ex);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
