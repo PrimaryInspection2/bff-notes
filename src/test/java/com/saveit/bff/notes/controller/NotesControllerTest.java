@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,10 +41,13 @@ class NotesControllerTest {
     private ObjectMapper objectMapper;
 
     private NoteRequestDto validRequest;
+    private GetNotesRequestDto validGetNotesRequest;
     private NoteResponseDto validResponse;
 
     @BeforeEach
     void setUp() {
+        validGetNotesRequest = new GetNotesRequestDto("user1", null);
+
         validRequest = NoteRequestDto.builder()
                 .noteId("note1")
                 .userId("user1")
@@ -69,13 +72,9 @@ class NotesControllerTest {
                 .build();
     }
 
-    // =========================================================
-    // CREATE
-    // =========================================================
-
     @Test
     void create_shouldReturnCreatedNote_whenValidRequest() throws Exception {
-        when(noteService.create(any(NoteRequestDto.class), eq(NoteSource.REST_API)))
+        when(noteService.processNote(any(NoteRequestDto.class), eq(NoteSource.REST_API)))
                 .thenReturn(validResponse);
 
         mockMvc.perform(post("/note")
@@ -87,7 +86,7 @@ class NotesControllerTest {
                 .andExpect(jsonPath("$.status").value("ACTIVE"));
 
         ArgumentCaptor<NoteRequestDto> captor = ArgumentCaptor.forClass(NoteRequestDto.class);
-        verify(noteService).create(captor.capture(), eq(NoteSource.REST_API));
+        verify(noteService).processNote(captor.capture(), eq(NoteSource.REST_API));
 
         assertEquals("user1", captor.getValue().userId());
     }
@@ -108,10 +107,6 @@ class NotesControllerTest {
         verifyNoInteractions(noteService);
     }
 
-    // =========================================================
-    // GET BY ID
-    // =========================================================
-
     @Test
     void getById_shouldReturnNote_whenExists() throws Exception {
         when(noteService.getById("note1")).thenReturn(validResponse);
@@ -131,46 +126,9 @@ class NotesControllerTest {
 
         mockMvc.perform(get("/note/{id}", "note1"))
                 .andExpect(status().isInternalServerError());
-        // если у тебя есть @ControllerAdvice — поменяй на isNotFound()
 
         verify(noteService).getById("note1");
     }
-
-    // =========================================================
-    // UPDATE
-    // =========================================================
-
-    @Test
-    void update_shouldReturnUpdatedNote_whenValidRequest() throws Exception {
-        when(noteService.update(any(NoteRequestDto.class), eq(NoteSource.REST_API)))
-                .thenReturn(validResponse);
-
-        mockMvc.perform(put("/note/{id}", "note1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").value("Test content"));
-
-        verify(noteService).update(any(NoteRequestDto.class), eq(NoteSource.REST_API));
-    }
-
-    @Test
-    void update_shouldReturn400_whenInvalidRequest() throws Exception {
-        NoteRequestDto invalidRequest = validRequest.toBuilder()
-                .content("") // @NotBlank violation
-                .build();
-
-        mockMvc.perform(put("/note/{id}", "note1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(noteService);
-    }
-
-    // =========================================================
-    // DELETE
-    // =========================================================
 
     @Test
     void delete_shouldReturn200_whenSuccess() throws Exception {
@@ -191,40 +149,42 @@ class NotesControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
-    // =========================================================
-    // GET ALL
-    // =========================================================
-
     @Test
     void getAll_shouldReturnList_whenNotesExist() throws Exception {
-        when(noteService.getAllByUserId("user1"))
-                .thenReturn(List.of(validResponse));
+        when(noteService.getAllByUserId(validGetNotesRequest))
+                .thenReturn(Set.of(validResponse));
 
-        mockMvc.perform(get("/note")
-                        .param("userId", "user1"))
+        mockMvc.perform(get("/note/all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validGetNotesRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].noteId").value("note1"))
                 .andExpect(jsonPath("$[0].content").value("Test content"));
 
-        verify(noteService).getAllByUserId("user1");
+        verify(noteService).getAllByUserId(validGetNotesRequest);
     }
 
     @Test
     void getAll_shouldReturnEmptyList_whenNoNotes() throws Exception {
-        when(noteService.getAllByUserId("user1"))
-                .thenReturn(List.of());
+        when(noteService.getAllByUserId(validGetNotesRequest))
+                .thenReturn(Set.of());
 
-        mockMvc.perform(get("/note")
-                        .param("userId", "user1"))
+        mockMvc.perform(get("/note/all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validGetNotesRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
 
-        verify(noteService).getAllByUserId("user1");
+        verify(noteService).getAllByUserId(validGetNotesRequest);
     }
 
     @Test
     void getAll_shouldReturn400_whenUserIdMissing() throws Exception {
-        mockMvc.perform(get("/note"))
+        GetNotesRequestDto invalidRequest = new GetNotesRequestDto(null, Collections.emptySet());
+
+        mockMvc.perform(get("/note/all")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(noteService);
