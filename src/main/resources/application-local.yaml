@@ -1,3 +1,8 @@
 saveit:
   notes-service:
     url: localhost:9004
+
+logging:
+  level:
+    com.saveit: DEBUG
+    org.springframework: DEBUG

@@ -4,6 +4,7 @@ import com.saveit.bff.notes.exception.ApiErrorResponse;
 import com.saveit.bff.notes.exception.NoteServiceNotFoundException;
 import com.saveit.bff.notes.exception.NoteServiceGeneralException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
     // =========================================================
 
     @ExceptionHandler(NoteServiceNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleNoteNotFound(
+    public ResponseEntity<@NonNull ApiErrorResponse> handleNoteNotFound(
             NoteServiceNotFoundException ex,
             HttpServletRequest request
     ) {
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     // =========================================================
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorResponse> handleValidationException(
+    public ResponseEntity<@NonNull ApiErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex,
             HttpServletRequest request
     ) {
@@ -79,7 +80,7 @@ public class GlobalExceptionHandler {
     // =========================================================
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ApiErrorResponse> handleMissingParam(
+    public ResponseEntity<@NonNull ApiErrorResponse> handleMissingParam(
             MissingServletRequestParameterException ex,
             HttpServletRequest request
     ) {
@@ -99,7 +100,7 @@ public class GlobalExceptionHandler {
     // =========================================================
 
     @ExceptionHandler(NoteServiceGeneralException.class)
-    public ResponseEntity<ApiErrorResponse> handleServiceException(
+    public ResponseEntity<@NonNull ApiErrorResponse> handleServiceException(
             NoteServiceGeneralException ex,
             HttpServletRequest request
     ) {
@@ -121,7 +122,7 @@ public class GlobalExceptionHandler {
     // =========================================================
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleGenericException(
+    public ResponseEntity<@NonNull ApiErrorResponse> handleGenericException(
             Exception ex,
             HttpServletRequest request
     ) {
