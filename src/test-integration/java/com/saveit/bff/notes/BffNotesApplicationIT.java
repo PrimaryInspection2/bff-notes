@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("it")
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(classes = BffNotesApplicationIT.class)
+@SpringBootTest
 class BffNotesApplicationIT {
 
 	@Test

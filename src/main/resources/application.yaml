@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${SPRING_PROFILE_ACTIVE:local}
+    active: ${SPRING_PROFILE_ACTIVE}
   application:
     name: bff-notes
 
@@ -22,9 +22,9 @@ management:
 
 logging:
   level:
-    com.saveit: ${LOGGING_LEVEL_APP:INFO}
-    org.springframework: ${LOGGING_LEVEL_SPRING:INFO}
+    com.saveit: ${LOGGING_LEVEL_APP:ERROR}
+    org.springframework: ${LOGGING_LEVEL_SPRING:ERROR}
 
 saveit:
   notes-service:
-    url: ${NOTES_SERVICE_URL}
+    url: ${NOTES_SERVICE_URL:localhost:0000}

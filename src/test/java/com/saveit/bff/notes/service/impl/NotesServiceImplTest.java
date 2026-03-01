@@ -1,7 +1,7 @@
 package com.saveit.bff.notes.service.impl;
 
-import com.saveit.bff.notes.feign.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.feign.client.NotesServiceFeignClient;
+import com.saveit.bff.notes.feign.dto.NoteServiceRequestDto;
 import com.saveit.bff.notes.mapper.NoteServiceNoteRequestMapper;
 import com.saveit.bff.notes.web.dto.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,9 +32,12 @@ class NotesServiceImplTest {
     private NoteRequestDto requestDto;
     private NoteServiceRequestDto serviceRequestDto;
     private NoteResponseDto responseDto;
+    private GetNotesRequestDto validGetNotesRequest;
 
     @BeforeEach
     void setUp() {
+        validGetNotesRequest = new GetNotesRequestDto("user1", null);
+
         requestDto = NoteRequestDto.builder()
                 .noteId("note1")
                 .userId("user1")
@@ -71,10 +73,6 @@ class NotesServiceImplTest {
                 .build();
     }
 
-    // =========================================================
-    // CREATE
-    // =========================================================
-
     @Test
     void create_shouldMapAndCallFeignClient() {
         when(mapper.toNoteServiceRequestDto(requestDto, NoteSource.REST_API))
@@ -83,7 +81,7 @@ class NotesServiceImplTest {
         when(feignClient.create(serviceRequestDto))
                 .thenReturn(responseDto);
 
-        NoteResponseDto result = notesService.create(requestDto, NoteSource.REST_API);
+        NoteResponseDto result = notesService.processNote(requestDto, NoteSource.REST_API);
 
         assertNotNull(result);
         assertEquals("note1", result.noteId());
@@ -101,14 +99,10 @@ class NotesServiceImplTest {
                 .thenThrow(new RuntimeException("Feign error"));
 
         assertThrows(RuntimeException.class,
-                () -> notesService.create(requestDto, NoteSource.REST_API));
+                () -> notesService.processNote(requestDto, NoteSource.REST_API));
 
         verify(feignClient).create(serviceRequestDto);
     }
-
-    // =========================================================
-    // GET BY ID
-    // =========================================================
 
     @Test
     void getById_shouldReturnNote() {
@@ -131,42 +125,6 @@ class NotesServiceImplTest {
                 () -> notesService.getById("note1"));
     }
 
-    // =========================================================
-    // UPDATE
-    // =========================================================
-
-    @Test
-    void update_shouldMapAndCallFeignClient() {
-        when(mapper.toNoteServiceRequestDto(requestDto, NoteSource.REST_API))
-                .thenReturn(serviceRequestDto);
-
-        when(feignClient.update(serviceRequestDto))
-                .thenReturn(responseDto);
-
-        NoteResponseDto result = notesService.update(requestDto, NoteSource.REST_API);
-
-        assertEquals("Content", result.content());
-
-        verify(mapper).toNoteServiceRequestDto(requestDto, NoteSource.REST_API);
-        verify(feignClient).update(serviceRequestDto);
-    }
-
-    @Test
-    void update_shouldPropagateException_whenFeignFails() {
-        when(mapper.toNoteServiceRequestDto(requestDto, NoteSource.REST_API))
-                .thenReturn(serviceRequestDto);
-
-        when(feignClient.update(serviceRequestDto))
-                .thenThrow(new RuntimeException("Update failed"));
-
-        assertThrows(RuntimeException.class,
-                () -> notesService.update(requestDto, NoteSource.REST_API));
-    }
-
-    // =========================================================
-    // DELETE
-    // =========================================================
-
     @Test
     void delete_shouldCallFeignClient() {
         notesService.delete("note1");
@@ -184,32 +142,28 @@ class NotesServiceImplTest {
                 () -> notesService.delete("note1"));
     }
 
-    // =========================================================
-    // GET ALL
-    // =========================================================
-
     @Test
     void getAllByUserId_shouldReturnList() {
-        when(feignClient.getAll("user1"))
-                .thenReturn(List.of(responseDto));
+        when(feignClient.getAll(validGetNotesRequest))
+                .thenReturn(Set.of(responseDto));
 
-        List<NoteResponseDto> result = notesService.getAllByUserId("user1");
+        Set<NoteResponseDto> result = notesService.getAllByUserId(validGetNotesRequest);
 
         assertEquals(1, result.size());
-        assertEquals("note1", result.getFirst().noteId());
+        assertEquals("note1", result.stream().findFirst().get().noteId());
 
-        verify(feignClient).getAll("user1");
+        verify(feignClient).getAll(validGetNotesRequest);
         verifyNoInteractions(mapper);
     }
 
     @Test
     void getAllByUserId_shouldReturnEmptyList() {
-        when(feignClient.getAll("user1"))
-                .thenReturn(List.of());
+        when(feignClient.getAll(validGetNotesRequest))
+                .thenReturn(Set.of());
 
-        List<NoteResponseDto> result = notesService.getAllByUserId("user1");
+        Set<NoteResponseDto> result = notesService.getAllByUserId(validGetNotesRequest);
 
         assertTrue(result.isEmpty());
-        verify(feignClient).getAll("user1");
+        verify(feignClient).getAll(validGetNotesRequest);
     }
 }
