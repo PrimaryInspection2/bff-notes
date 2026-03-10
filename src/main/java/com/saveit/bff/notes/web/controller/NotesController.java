@@ -42,8 +42,8 @@ public class NotesController {
         notesService.delete(id);
     }
 
-    @GetMapping("/all")
-    public Set<NoteResponseDto> getAll(@Valid @RequestBody GetNotesRequestDto request) {
+    @PostMapping("/search")
+    public Set<NoteResponseDto> searchNotes(@Valid @RequestBody GetNotesRequestDto request) {
         log.info("Get all notes for userId={}", request.userId());
         return notesService.getAllByUserId(request);
     }

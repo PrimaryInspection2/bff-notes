@@ -201,14 +201,14 @@ class NotesControllerIT {
                 .andExpect(status().isBadRequest());
     }
     // =======================
-    // GET /note/all
+    // POST /note/search
     // =======================
 
     @Test
-    void getAll_shouldReturnList_whenNotesExist() throws Exception {
+    void searchNotes_shouldReturnList_whenNotesExist() throws Exception {
         when(noteService.getAllByUserId(validGetNotesRequest))
                 .thenReturn(Set.of(validResponse));
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validGetNotesRequest)))
                 .andExpect(status().isOk())
@@ -219,7 +219,7 @@ class NotesControllerIT {
     @Test
     void getAll_shouldReturnEmptyList_whenNoNotes() throws Exception {
         when(noteService.getAllByUserId(validGetNotesRequest)).thenReturn(Set.of());
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validGetNotesRequest)))
                 .andExpect(status().isOk())
@@ -230,7 +230,7 @@ class NotesControllerIT {
     @Test
     void getAll_shouldReturn400_whenUserIdBlank() throws Exception {
         GetNotesRequestDto invalid = new GetNotesRequestDto("", null);
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalid)))
                 .andExpect(status().isBadRequest());
@@ -238,10 +238,10 @@ class NotesControllerIT {
     }
 
     @Test
-    void getAll_shouldReturnNotes_whenTagIdsProvided() throws Exception {
+    void searchNotes_shouldReturnNotes_whenTagIdsProvided() throws Exception {
         GetNotesRequestDto request = new GetNotesRequestDto("user1", Set.of("tag1", "tag2"));
         when(noteService.getAllByUserId(request)).thenReturn(Set.of(validResponse));
-        mockMvc.perform(get("/note/all")
+        mockMvc.perform(post("/note/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

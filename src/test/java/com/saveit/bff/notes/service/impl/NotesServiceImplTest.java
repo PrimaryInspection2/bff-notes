@@ -144,7 +144,7 @@ class NotesServiceImplTest {
 
     @Test
     void getAllByUserId_shouldReturnList() {
-        when(feignClient.getAll(validGetNotesRequest))
+        when(feignClient.searchNotes(validGetNotesRequest))
                 .thenReturn(Set.of(responseDto));
 
         Set<NoteResponseDto> result = notesService.getAllByUserId(validGetNotesRequest);
@@ -152,18 +152,18 @@ class NotesServiceImplTest {
         assertEquals(1, result.size());
         assertEquals("note1", result.stream().findFirst().get().noteId());
 
-        verify(feignClient).getAll(validGetNotesRequest);
+        verify(feignClient).searchNotes(validGetNotesRequest);
         verifyNoInteractions(mapper);
     }
 
     @Test
     void getAllByUserId_shouldReturnEmptyList() {
-        when(feignClient.getAll(validGetNotesRequest))
+        when(feignClient.searchNotes(validGetNotesRequest))
                 .thenReturn(Set.of());
 
         Set<NoteResponseDto> result = notesService.getAllByUserId(validGetNotesRequest);
 
         assertTrue(result.isEmpty());
-        verify(feignClient).getAll(validGetNotesRequest);
+        verify(feignClient).searchNotes(validGetNotesRequest);
     }
 }

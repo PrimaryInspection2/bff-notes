@@ -50,7 +50,7 @@ public class NotesServiceImpl implements NoteService {
     public Set<NoteResponseDto> getAllByUserId(GetNotesRequestDto request) {
         String userId = request.userId();
         log.info("Fetching all notes for userId={}", userId);
-        Set<NoteResponseDto> notes = notesServiceFeignClient.getAll(request);
+        Set<NoteResponseDto> notes = notesServiceFeignClient.searchNotes(request);
         log.info("Fetched {} notes for userId={}", notes.size(), userId);
         return notes;
     }
