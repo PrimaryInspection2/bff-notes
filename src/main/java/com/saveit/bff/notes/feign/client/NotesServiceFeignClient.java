@@ -26,6 +26,6 @@ public interface NotesServiceFeignClient {
     @DeleteMapping("/{id}")
     void delete(@PathVariable("id") String id);
 
-    @GetMapping("/all")
-    Set<NoteResponseDto> getAll(@RequestBody GetNotesRequestDto request);
+    @PostMapping("/search")
+    Set<NoteResponseDto> searchNotes(@RequestBody GetNotesRequestDto request);
 }
