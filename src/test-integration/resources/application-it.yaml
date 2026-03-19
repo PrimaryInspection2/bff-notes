@@ -5,4 +5,4 @@ logging:
 
 saveit:
   notes-service:
-    url: localhost:9004
+    url: localhost:9000

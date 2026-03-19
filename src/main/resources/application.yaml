@@ -5,7 +5,7 @@ spring:
     name: bff-notes
 
 server:
-  port: 9003
+  port: 9004
   servlet:
     context-path: /bff-notes
 
@@ -27,4 +27,4 @@ logging:
 
 saveit:
   notes-service:
-    url: ${NOTES_SERVICE_URL:localhost:0000}
+    url: ${NOTES_SERVICE_URL}

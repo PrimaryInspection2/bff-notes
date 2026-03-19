@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bff-notes
+  namespace: notes-app
+  labels:
+    app: bff-notes
+spec:
+  type: ClusterIP
+  selector:
+    app: bff-notes
+  ports:
+    - name: http
+      port: 9004
+      targetPort: 9004
+    - name: actuator
+      port: 9192
+      targetPort: 9192
