@@ -1,6 +1,9 @@
 saveit:
   notes-service:
-    url: localhost:9004
+    url: localhost:9000
+
+server:
+  port: 9001
 
 logging:
   level:

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bff-notes
+  namespace: notes-app
+  labels:
+    app: bff-notes
+spec:
+  # number of pod replicas to run
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bff-notes
+  template:
+    metadata:
+      labels:
+        app: bff-notes
+    spec:
+      containers:
+        - name: bff-notes
+          # use specific image tag, never use 'latest' in production
+          image: andreyjava404/bff-notes:TODO
+          # always pull from registry to ensure latest tag is used
+          imagePullPolicy: Always
+          ports:
+            # main application port
+            - containerPort: 9004
+            # actuator/management port
+            - containerPort: 9192
+          env:
+            # non-sensitive config from ConfigMap
+            - name: SPRING_PROFILE_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: bff-notes-config
+                  key: SPRING_PROFILE_ACTIVE
+            - name: LOGGING_LEVEL_APP
+              valueFrom:
+                configMapKeyRef:
+                  name: bff-notes-config
+                  key: LOGGING_LEVEL_APP
+            - name: LOGGING_LEVEL_SPRING
+              valueFrom:
+                configMapKeyRef:
+                  name: bff-notes-config
+                  key: LOGGING_LEVEL_SPRING
+            - name: NOTES_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: bff-notes-config
+                  key: NOTES_SERVICE_URL
+          # liveness probe — restarts container if app is unhealthy
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9192
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          # readiness probe — removes pod from load balancer if not ready
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9192
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # resource limits — important for Autopilot
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always
