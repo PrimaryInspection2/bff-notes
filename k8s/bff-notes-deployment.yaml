@@ -19,7 +19,7 @@ spec:
       containers:
         - name: bff-notes
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/bff-notes:TODO
+          image: andreyjava404/bff-notes:latest
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
@@ -54,7 +54,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: 9192
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
@@ -63,7 +63,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: 9192
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
