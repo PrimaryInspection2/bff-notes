@@ -11,11 +11,11 @@ server:
 
 management:
   server:
-    port: 9191
+    port: 9192
   endpoints:
     web:
       exposure:
-        include: info, health, metrics, loggers, monitoring
+        include: info, health, metrics, loggers, monitoring, prometheus
   endpoint:
     health:
       show-details: always
