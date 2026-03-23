@@ -23,7 +23,7 @@ spec:
       containers:
         - name: bff-notes
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/bff-notes:4.0.2-97090f8
+          image: andreyjava404/bff-notes:4.0.2-3a4af79
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
