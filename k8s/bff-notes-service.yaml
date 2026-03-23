@@ -10,9 +10,9 @@ spec:
   selector:
     app: bff-notes
   ports:
-    - name: http
+    - name: svc-port
       port: 9004
       targetPort: 9004
-    - name: actuator
+    - name: admin
       port: 9192
       targetPort: 9192

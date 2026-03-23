@@ -4,13 +4,15 @@ metadata:
   name: bff-notes-main-ingress
   namespace: notes-app
   annotations:
-    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/healthcheck-path: "/actuator/health"
+    nginx.ingress.kubernetes.io/healthcheck-port: "9192"
 spec:
   rules:
     - http:
         paths:
-          - path: /bff-notes/*
-            pathType: ImplementationSpecific
+          - path: /bff-notes/
+            pathType: Prefix
             backend:
               service:
                 name: bff-notes

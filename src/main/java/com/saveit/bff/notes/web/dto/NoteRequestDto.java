@@ -6,6 +6,6 @@ import lombok.Builder;
 import java.util.Set;
 
 @Builder(toBuilder = true)
-public record NoteRequestDto(@NotBlank String noteId, @NotBlank String userId, String title, NoteStatus status,
+public record NoteRequestDto(String noteId, @NotBlank String userId, String title, NoteStatus status,
                              @NotBlank String content, NotePriority priority, Set<TagDto> tags) {
 }
