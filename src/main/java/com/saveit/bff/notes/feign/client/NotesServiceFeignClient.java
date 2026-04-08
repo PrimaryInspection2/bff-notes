@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+//todo try to use service discovery here
 @FeignClient(
         name = "notesServiceFeignClient",
         url = "${saveit.notes-service.url}",

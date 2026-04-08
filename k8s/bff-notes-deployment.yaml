@@ -6,8 +6,6 @@ metadata:
   labels:
     app: bff-notes
 spec:
-  # number of pod replicas to run
-  replicas: 1
   selector:
     matchLabels:
       app: bff-notes
@@ -23,7 +21,7 @@ spec:
       containers:
         - name: bff-notes
           # use specific image tag, never use 'latest' in production
-          image: andreyjava404/bff-notes:4.0.2-4c92210
+          image: andreyjava404/bff-notes:4.0.2-95647bc
           # always pull from registry to ensure latest tag is used
           imagePullPolicy: Always
           ports:
