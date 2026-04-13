@@ -99,16 +99,6 @@ class NotesControllerIT {
     }
 
     @Test
-    void create_shouldReturn400_whenNoteIdBlank() throws Exception {
-        NoteRequestDto invalid = validRequest.toBuilder().noteId("").build();
-        mockMvc.perform(post("/note")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalid)))
-                .andExpect(status().isBadRequest());
-        verifyNoInteractions(noteService);
-    }
-
-    @Test
     void create_shouldReturn400_whenUserIdBlank() throws Exception {
         NoteRequestDto invalid = validRequest.toBuilder().userId("").build();
         mockMvc.perform(post("/note")

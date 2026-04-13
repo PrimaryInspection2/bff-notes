@@ -1,16 +1,18 @@
 package com.saveit.bff.notes.web.dto;
 
+import java.util.Objects;
+
 public record TagDto(String tagId, String name, String color, String description) {
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TagDto other)) return false;
-        return tagId.equals(other.tagId) && name.equals(other.name);
+        return Objects.equals(name, other.name);
     }
 
     @Override
     public int hashCode() {
-        return 31 * tagId.hashCode() + name.hashCode();
+        return Objects.hash(name);
     }
 }

@@ -5,6 +5,10 @@ saveit:
 server:
   port: 9001
 
+management:
+  server:
+    port: 9193
+
 logging:
   level:
     com.saveit: DEBUG
