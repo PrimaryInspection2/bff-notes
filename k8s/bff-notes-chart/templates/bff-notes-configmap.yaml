@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.service.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bff-notes.labels" . | nindent 4 }}
+data:
+  SPRING_PROFILE_ACTIVE: {{ .Values.service.activeProfile | quote }}
+  LOGGING_LEVEL_APP: {{ .Values.service.loggingLevelApp | quote }}
+  LOGGING_LEVEL_SPRING: {{ .Values.service.loggingLevelSpring | quote }}
+  # URL of notes-service within the cluster
+  NOTES_SERVICE_URL: {{ .Values.service.notesServiceUrl | quote }}

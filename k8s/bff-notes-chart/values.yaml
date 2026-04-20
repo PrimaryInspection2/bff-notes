@@ -1,0 +1,33 @@
+# Default values for bff-notes
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+service:
+  activeProfile: dev
+  name: bff-notes
+  mainPort: 9004
+  managementPort: 9192
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+  loggingLevelApp: DEBUG
+  loggingLevelSpring: DEBUG
+  notesServiceUrl: http://notes-service.notes-app.svc.cluster.local:9004
+  minReplicas: 1
+  maxReplicas: 3
+
+image:
+  repository: andreyjava404/bff-notes
+  tag: 4.0.2-a32e0b6
+  imagePullPolicy: Always
+
+hpa:
+  cpuUtilization: 70
+  scaleDown:
+    stabilizationWindowSeconds: 300
+  scaleUp:
+    stabilizationWindowSeconds: 0
