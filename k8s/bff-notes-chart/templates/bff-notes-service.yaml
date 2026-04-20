@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bff-notes.labels" . | nindent 4 }}
+spec:
+  # ClusterIP = internal only, accessible within cluster via DNS
+  type: ClusterIP
+  selector:
+    {{- include "bff-notes.selectorLabels" . | nindent 4 }}
+  ports:
+    # main application port
+    - name: http
+      port: {{ .Values.service.mainPort }}
+      targetPort: {{ .Values.service.mainPort }}
+    # actuator port — for internal monitoring only
+    - name: actuator
+      port: {{ .Values.service.managementPort }}
+      targetPort: {{ .Values.service.managementPort }}

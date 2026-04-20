@@ -212,5 +212,4 @@ $RECYCLE.BIN/
 /target/classes/application-local.yaml
 /target/classes/application.yaml
 /target/
-/k8s/notes-service-secret.yaml
 /k8s/deploy-bff-notes.sh
